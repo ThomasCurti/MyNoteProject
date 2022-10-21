@@ -17,11 +17,12 @@ module.exports = async function (fastify: any, opts: any) {
     },
   };
 
-  fastify.get("/:id:/", async function (request: any, reply: any) {
-    return new NoteResponse("test", "test", "test");
+  fastify.get("/:id", async function (request: any, reply: any) {
+    reply.statusCode = 200;
+    reply.send(new NoteResponse("test", "test", "test"));
   });
 
-  fastify.post("/insert/", async function (request: any, reply: any) {
+  fastify.post("/", async function (request: any, reply: any) {
     return "this is an example";
   });
 };
