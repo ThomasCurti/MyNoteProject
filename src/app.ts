@@ -9,6 +9,7 @@ import openTelemetryConf from "./config/openTelemetry";
 import { swaggerConf, swaggerUiConf } from "./config/swagger";
 import awilixConf from "./config/awilix";
 import { registerServices } from "../src/utils/awilix";
+import postgresConf from "./config/postgres";
 
 function build(): FastifyInstance {
   const fastify = Fastify({});
@@ -31,6 +32,8 @@ function build(): FastifyInstance {
   );
 
   fastify.register(import("fastify-healthcheck"), healthcheckConf);
+
+  fastify.register(require("@fastify/postgres"), postgresConf);
 
   // Error handler
   // fastify.setErrorHandler(customErrorHandler);

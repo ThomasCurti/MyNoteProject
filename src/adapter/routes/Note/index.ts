@@ -1,6 +1,7 @@
 import { getOpts } from "./Note.schema";
 import NoteResponse from "./NoteResponse";
 import INoteService from "../../../ports/INoteService";
+import INoteRepository from "../../../ports/INoteRepository";
 
 module.exports = async function (fastify: any, opts: any) {
   fastify.route({
@@ -8,7 +9,10 @@ module.exports = async function (fastify: any, opts: any) {
     method: ["GET"],
     schema: getOpts.schema,
     handler: async function (request: any, reply: any) {
-      console.log(request.diScope.resolve("noteService"));
+      const noteService: INoteService = request.diScope.resolve("noteService");
+
+      await noteService.getNoteFromId(request.params.id);
+
       reply.send(new NoteResponse("test", "test", "test"));
     },
   });

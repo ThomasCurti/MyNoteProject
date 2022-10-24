@@ -1,7 +1,8 @@
 import { diContainer } from "@fastify/awilix";
-import { asClass, asFunction, Lifetime } from "awilix";
+import { asClass, Lifetime } from "awilix";
+import NoteService from "../domain/NoteService";
+import NoteRepository from "../domain/NoteRepository";
 import { FastifyInstance } from "fastify";
-import { NoteService } from "../domain/NoteService";
 
 export const registerServices = (fastify: FastifyInstance) => {
   diContainer.register({
@@ -9,5 +10,11 @@ export const registerServices = (fastify: FastifyInstance) => {
       lifetime: Lifetime.SINGLETON,
       dispose: (module) => module.dispose(),
     }),
+  });
+  diContainer.register({
+    noteRepository: asClass(NoteRepository, {
+      lifetime: Lifetime.SINGLETON,
+      dispose: (module) => module.dispose(),
+    }).inject(() => fastify),
   });
 };
