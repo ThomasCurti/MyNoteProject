@@ -15,12 +15,10 @@ module.exports = async function (fastify: any, opts: any) {
 
       const { id, author } = request.query;
 
-      console.info(request.query);
-
       const result = await noteService.getNoteFromIdOrAuthor(id, author);
       // TODO OTL
 
-      reply.send(new NoteResponse(result.id, result.author, result.author));
+      reply.send(new NoteResponse(result.id, result.author, result.body));
     },
   });
 

@@ -35,7 +35,7 @@ export function build(): FastifyInstance {
 
   fastify.register(import("fastify-healthcheck"), healthcheckConf);
 
-  fastify.register(import("@fastify/postgres"), postgresConf);
+  fastify.register(import("@fastify/postgres"), postgresConf); // "postgres://admin:admin@localhost/Notes"
 
   // Error handler
   fastify.setErrorHandler(customErrorHandler);

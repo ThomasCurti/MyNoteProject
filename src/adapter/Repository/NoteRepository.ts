@@ -1,67 +1,83 @@
 import INoteRepository from "../../ports/INoteRepository";
 import IInjectableModule from "../../ports/IInjectableModule";
 import NoteDto from "../../ports/NoteDto";
-import { FastifyInstance } from "fastify/types/instance";
-import { PoolClient } from "pg";
-import QueryStream from "pg-query-stream";
-import pg from "pg";
 import Note from "../../domain/Note";
-import JSONStream from "jsonstream";
+import { DataTypes, Op, Sequelize } from "sequelize";
 
 class NoteRepository extends IInjectableModule implements INoteRepository {
+  private _sequilize: Sequelize;
+
   constructor() {
     super();
-  }
 
-  dispose() {}
+    this._sequilize = new Sequelize(process.env.PG_CONN || "", {
+      logging: (...msg) => console.log(msg),
+    });
+    this.initDtos();
+  }
 
   async getNoteFromIdOrAuthor(id?: number, author?: string): Promise<NoteDto> {
     // TODO OTL
-    const pool = new pg.Pool();
+    await this.authenticateConnection();
 
-    pool.connect(
-      (error: Error, client: PoolClient, done: (release?: any) => void) => {
-        if (error) throw error;
+    console.log(author);
 
-        const query =
-          "SELECT id, author, body FROM Notes WHERE id=$1 OR author=$2"; // TODO use another ORM ?
+    const result = await NoteDto.findOne({
+      where: {
+        [Op.or]: [
+          {
+            id: {
+              [Op.and]: [{ [Op.ne]: null, [Op.eq]: id }],
+            },
+          },
+          {
+            author: {
+              [Op.and]: [{ [Op.ne]: null, [Op.eq]: `${author} - certified` }],
+            },
+          },
+        ],
+      },
+    });
 
-        console.log(client);
+    if (!result) throw new Error("Not Found"); //TODO Specific exception
 
-        const stream = client.query(
-          query,
-          [id || "", author || ""],
-          (error, results) => {
-            if (error) throw error;
-            console.log(results.rows);
-          }
-        );
-      }
-    );
-    throw new Error("Method not implemented.");
+    return result;
   }
 
   async insertNote(note: Note): Promise<boolean> {
     // TODO OTL
-    const pool = new pg.Pool();
+    await this.authenticateConnection();
 
-    pool.connect(
-      (error: Error, client: PoolClient, done: (release?: any) => void) => {
-        if (error) throw error;
+    const result = await NoteDto.create({
+      author: note.author,
+      body: note.body,
+    }).catch((error) => {
+      throw new Error(error); // TODO Specific Error
+    });
 
-        const query = "INSERT INTO Notes (author, body) VALUES ($1, $2)"; // TODO use another ORM ?
+    if (!result) throw new Error(""); // TODO Specific Error
 
-        const stream = client.query(
-          query,
-          [note.author, note.body],
-          (error, results) => {
-            if (error) throw error;
-            console.log(results.rows);
-          }
-        );
-      }
+    return true;
+  }
+
+  private async initDtos() {
+    NoteDto.init(
+      {
+        author: DataTypes.STRING,
+        body: DataTypes.STRING,
+      },
+      { sequelize: this._sequilize, modelName: "notes" }
     );
-    throw new Error("Method not implemented.");
+
+    NoteDto.sync();
+  }
+
+  private async authenticateConnection() {
+    try {
+      await this._sequilize.authenticate();
+    } catch (error) {
+      throw new Error(`Unable to connect to the database: ${error}`);
+    }
   }
 }
 

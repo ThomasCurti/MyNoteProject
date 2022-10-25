@@ -1,5 +1,5 @@
 class Note {
-  id: string;
+  id: number;
   author: string;
   body: string;
 }

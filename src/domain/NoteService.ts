@@ -16,9 +16,11 @@ class NoteService extends IInjectableModule implements INoteService {
   }
 
   async getNoteFromIdOrAuthor(id?: number, author?: string): Promise<Note> {
-    console.info(`Getting note ${id}`);
     // TODO OTL
-    const noteDto = await this._noteRepository.getNoteFromIdOrAuthor(id);
+    const noteDto = await this._noteRepository.getNoteFromIdOrAuthor(
+      id,
+      author
+    );
 
     // TODO Automapper
     const note: Note = {
@@ -38,7 +40,6 @@ class NoteService extends IInjectableModule implements INoteService {
     }
 
     const httpResult = await this._httpClient.sendRandomGetCall();
-    console.info(httpResult);
 
     const note: Note = this.changeNoteForInsertion(noteRequest);
 
@@ -49,7 +50,7 @@ class NoteService extends IInjectableModule implements INoteService {
 
   private changeNoteForInsertion(noteRequest: NoteRequest): Note {
     return {
-      id: "0",
+      id: 0,
       author: `${noteRequest.author} - certified`,
       body: noteRequest.body,
     };
