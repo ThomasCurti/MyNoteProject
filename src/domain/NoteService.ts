@@ -40,18 +40,20 @@ class NoteService extends IInjectableModule implements INoteService {
     const httpResult = await this._httpClient.sendRandomGetCall();
     console.info(httpResult);
 
-    const note: Note = {
-      id: "0",
-      author: `${noteRequest.author} - certified`,
-      body: noteRequest.body,
-    };
+    const note: Note = this.changeNoteForInsertion(noteRequest);
 
     const result = await this._noteRepository.insertNote(note);
 
     return result;
   }
 
-  dispose() {}
+  private changeNoteForInsertion(noteRequest: NoteRequest): Note {
+    return {
+      id: "0",
+      author: `${noteRequest.author} - certified`,
+      body: noteRequest.body,
+    };
+  }
 }
 
 export default NoteService;
