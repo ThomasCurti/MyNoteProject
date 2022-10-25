@@ -14,7 +14,6 @@ import customErrorHandler from "./errors/customErrorHandler";
 
 export function build(): FastifyInstance {
   const fastify = Fastify({ logger: { level: process.env.LOG_LVL || "info" } });
-  console.log(process.env.LOG_LVL);
 
   // Plugins
   fastify.register(import("@fastify/swagger"), swaggerConf);

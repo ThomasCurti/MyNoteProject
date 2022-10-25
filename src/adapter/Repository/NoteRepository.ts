@@ -10,17 +10,13 @@ class NoteRepository extends IInjectableModule implements INoteRepository {
   constructor() {
     super();
 
-    this._sequilize = new Sequelize(process.env.PG_CONN || "", {
-      logging: (...msg) => console.log(msg),
-    });
+    this._sequilize = new Sequelize(process.env.PG_CONN || "");
     this.initDtos();
   }
 
   async getNoteFromIdOrAuthor(id?: number, author?: string): Promise<NoteDto> {
     // TODO OTL
     await this.authenticateConnection();
-
-    console.log(author);
 
     const result = await NoteDto.findOne({
       where: {

@@ -1,0 +1,19 @@
+name: note-project
+run-name: ${{ github.actor }} has pushed some code
+on: [push]
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: install-packages
+        uses: CultureHQ/actions-yarn@master
+        with:
+          args: install
+      - name: run-test
+        uses: CultureHQ/actions-yarn@master
+        with:
+          args: test

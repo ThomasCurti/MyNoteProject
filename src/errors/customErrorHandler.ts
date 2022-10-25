@@ -19,7 +19,7 @@ function customErrorHandler(
   // https://www.fastify.io/docs/latest/Reference/Errors/
 
   Object.keys(errorCodes).forEach((key) => {
-    if (error instanceof errorCodes[key]) console.log(errorCodes[key], key);
+    if (error instanceof errorCodes[key]) console.error(errorCodes[key], key);
   });
 
   response.code(error.statusCode || 500);
