@@ -3,17 +3,20 @@ import IInjectableModule from "../ports/IInjectableModule";
 import INoteRepository from "../ports/INoteRepository";
 import Note from "./Note";
 import NoteRequest from "../adapter/routes/Note/NoteRequest";
+import IHttpClient from "src/ports/IHttpClient";
 
 class NoteService extends IInjectableModule implements INoteService {
   private _noteRepository: INoteRepository;
+  private _httpClient: IHttpClient;
 
-  constructor({ noteRepository }: any) {
+  constructor({ noteRepository, httpClient }: any) {
     super();
     this._noteRepository = noteRepository;
+    this._httpClient = httpClient;
   }
 
   async getNoteFromIdOrAuthor(id?: number, author?: string): Promise<Note> {
-    console.log(`Getting note ${id}`);
+    console.info(`Getting note ${id}`);
     // TODO OTL
     const noteDto = await this._noteRepository.getNoteFromIdOrAuthor(id);
 
@@ -33,6 +36,9 @@ class NoteService extends IInjectableModule implements INoteService {
     if (noteRequest.author.length > 255) {
       throw Error("Author name is greater than 255");
     }
+
+    const httpResult = await this._httpClient.sendRandomGetCall();
+    console.info(httpResult);
 
     const note: Note = {
       id: "0",

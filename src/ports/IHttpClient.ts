@@ -1,5 +1,5 @@
 interface IHttpClient {
-  sendRandomGetCall(): any;
+  sendRandomGetCall(): Promise<any>;
 }
 
 export default IHttpClient;

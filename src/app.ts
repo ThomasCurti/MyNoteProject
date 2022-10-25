@@ -14,6 +14,7 @@ import customErrorHandler from "./errors/customErrorHandler";
 
 function build(): FastifyInstance {
   const fastify = Fastify({ logger: { level: process.env.LOG_LVL || "info" } });
+  console.log(process.env.LOG_LVL);
 
   // Plugins
   fastify.register(import("@fastify/swagger"), swaggerConf);
@@ -34,7 +35,7 @@ function build(): FastifyInstance {
 
   fastify.register(import("fastify-healthcheck"), healthcheckConf);
 
-  fastify.register(require("@fastify/postgres"), postgresConf);
+  fastify.register(import("@fastify/postgres"), postgresConf);
 
   // Error handler
   fastify.setErrorHandler(customErrorHandler);
@@ -51,11 +52,11 @@ async function start() {
 
     const opt = { port, address };
 
-    console.log(`Server started at: http://${opt.address}:${opt.port}`);
+    console.info(`Server started at: http://${opt.address}:${opt.port}`);
 
     await server.listen(opt);
   } catch (err) {
-    console.log("Error while starting server: ", err);
+    console.error("Error while starting server: ", err);
     process.exit(1);
   }
 }
