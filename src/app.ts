@@ -10,9 +10,10 @@ import { swaggerConf, swaggerUiConf } from "./config/swagger";
 import awilixConf from "./config/awilix";
 import { registerServices } from "../src/utils/awilix";
 import postgresConf from "./config/postgres";
+import customErrorHandler from "./errors/customErrorHandler";
 
 function build(): FastifyInstance {
-  const fastify = Fastify({});
+  const fastify = Fastify({ logger: { level: process.env.LOG_LVL || "info" } });
 
   // Plugins
   fastify.register(import("@fastify/swagger"), swaggerConf);
@@ -36,7 +37,7 @@ function build(): FastifyInstance {
   fastify.register(require("@fastify/postgres"), postgresConf);
 
   // Error handler
-  // fastify.setErrorHandler(customErrorHandler);
+  fastify.setErrorHandler(customErrorHandler);
 
   return fastify;
 }
