@@ -12,6 +12,7 @@ class NoteRepository extends IInjectableModule implements INoteRepository {
 
     this._sequilize = new Sequelize(process.env.PG_CONN || "");
     this.initDtos();
+    this._sequilize.sync({ alter: true });
   }
 
   async getNoteFromIdOrAuthor(id?: number, author?: string): Promise<NoteDto> {
@@ -60,12 +61,10 @@ class NoteRepository extends IInjectableModule implements INoteRepository {
     NoteDto.init(
       {
         author: DataTypes.STRING,
-        body: DataTypes.STRING,
+        body: DataTypes.TEXT,
       },
       { sequelize: this._sequilize, modelName: "notes" }
     );
-
-    NoteDto.sync();
   }
 
   private async authenticateConnection() {

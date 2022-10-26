@@ -11,7 +11,9 @@ async function start() {
 
     console.info(`Server started at: http://${opt.address}:${opt.port}`);
 
-    await server.listen(opt);
+    await server.listen(port, "0.0.0.0", () =>
+      console.log("SERVER LISTENING AT PORT : " + port)
+    );
   } catch (err) {
     console.error("Error while starting server: ", err);
     process.exit(1);

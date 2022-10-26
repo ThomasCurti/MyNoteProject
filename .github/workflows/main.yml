@@ -1,20 +1,38 @@
 name: note-project
 run-name: ${{ github.actor }} has pushed some code
 on: [push]
+env:
+  NODE_VERSION: '18'
+  AZURE_WEBAPP_NAME: 'matrice-note-neo'
+  AZURE_WEBAPP_PACKAGE_PATH: '_dist'
 jobs:
   run-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
         with:
-          node-version: '18'
-      - name: Apt Update
-        run: sudo apt update -y
-      - name: Install Git & SSH
-        run: sudo apt-get install -y git openssh-client
-      
+          node-version: '${{ env.NODE_VERSION }}'
       - name: Run Tests
         uses: borales/actions-yarn@v3.0.0
         with:
           args: test
+  deploy-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: '${{ env.NODE_VERSION }}'
+      - name: Install Yarn
+        run: npm install --global yarn
+      - name: Yarn install & build
+        run: yarn install --production=true; yarn build; mv node_modules _dist
+      - name: 'Deploy to Azure WebApp'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: '${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }}'
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
