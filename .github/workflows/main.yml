@@ -9,11 +9,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - name: install-packages
-        uses: CultureHQ/actions-yarn@master
-        with:
-          args: install
-      - name: run-test
-        uses: CultureHQ/actions-yarn@master
+      - name: Apt Update
+        run: sudo apt update -y
+      - name: Install Git & SSH
+        run: sudo apt-get install -y git openssh-client
+      
+      - name: Run Tests
+        uses: borales/actions-yarn@v3.0.0
         with:
           args: test
