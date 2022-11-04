@@ -7,13 +7,11 @@ async function start() {
   try {
     const server = build();
 
-    const opt = { port, address };
+    const opt = { port, host: address };
 
-    console.info(`Server started at: http://${opt.address}:${opt.port}`);
+    console.info(`Server started at: http://${opt.host}:${opt.port}`);
 
-    await server.listen(port, "0.0.0.0", () =>
-      console.log("SERVER LISTENING AT PORT : " + port)
-    );
+    await server.listen(opt);
   } catch (err) {
     console.error("Error while starting server: ", err);
     process.exit(1);
