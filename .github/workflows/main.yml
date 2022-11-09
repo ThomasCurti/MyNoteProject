@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: '${{ env.NODE_VERSION }}'
       - name: Install Yarn
-        run: npm install --global yarn
+        run: npm install --global yarn; yarn -v
       - name: Yarn install & build
         run: yarn install --production=true; yarn build; mv node_modules _dist
       - name: 'Deploy to Azure WebApp'
