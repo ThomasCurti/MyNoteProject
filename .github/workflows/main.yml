@@ -32,7 +32,7 @@ jobs:
       - name: Install Yarn
         run: npm install --global yarn; yarn -v
       - name: Yarn install & build
-        run: yarn install --production=true; yarn build; mv node_modules _dist
+        run: yarn install; yarn build; mv node_modules _dist
       - name: 'Deploy to Azure WebApp'
         uses: azure/webapps-deploy@v2
         with:
